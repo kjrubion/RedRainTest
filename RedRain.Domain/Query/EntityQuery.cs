@@ -11,15 +11,27 @@ namespace RedRain.Domain.Query
 {
     public class EntityQuery
     {
+        /// <summary>
+        /// The entity repository
+        /// </summary>
         private readonly IEntityRepository _entityRepository;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityQuery"/> class.
+        /// </summary>
+        /// <param name="entityRepository">The entity repository.</param>
         public EntityQuery(IEntityRepository entityRepository)
         {
             _entityRepository = entityRepository;
         }
-        public GenericResult Get(string type)
+        /// <summary>
+        /// Gets the specified request.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        public GenericResult Get(EntityRequest request)
         {
-            var result = _entityRepository.GetEntityByType(type);
+            var result = _entityRepository.GetEntityByType(request);
             return Helper.Response(200, result);
         }
     }

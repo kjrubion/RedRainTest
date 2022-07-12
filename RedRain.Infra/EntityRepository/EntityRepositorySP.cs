@@ -11,6 +11,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using RedRain.Domain;
+using RedRain.Domain.Common;
 using RedRain.Domain.Repositories;
 using RedRain.Infra.Context;
 
@@ -18,17 +19,33 @@ namespace RedRain.Infra.EntityRepository
 {
     public class EntityRepositorySP : IEntityRepository
     {
+        /// <summary>
+        /// The ef context
+        /// </summary>
         private readonly EFContext _efContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EntityRepositorySP"/> class.
+        /// </summary>
+        /// <param name="efContext">The ef context.</param>
         public EntityRepositorySP(EFContext efContext)
         {
             _efContext = efContext;
         }
 
-        public Entity? GetEntityByType(string type)
+        /// <summary>
+        /// Gets the type of the entity by.
+        /// </summary>
+        /// <param name="request">The request.</param>
+        /// <returns></returns>
+        public Entity? GetEntityByType(EntityRequest request)
         {
-            var result = _efContext.Entities.FromSqlRaw($"GetEntityByType @Type={type};").ToList();
-            return result.Any() ? result.FirstOrDefault(): new Entity();
+            if (!string.IsNullOrEmpty(request.Source))
+            {
+                _efContext.ConfigureSource(request.Source);
+            }
+            var result = _efContext.Entities.FromSqlRaw($"GetEntityByType @Type={request.Type};").ToList();
+            return result.Any() ? result.FirstOrDefault() : new Entity();
         }
     }
 }
